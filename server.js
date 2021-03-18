@@ -9,6 +9,8 @@ app.get('/', (req, res) => {
   res.send('Hello, world!')
 })
 
+app.post('/upload')
+
 app.listen(port, () => {
   console.log(`Server now listens to port ${port}`);
 });
