@@ -10,6 +10,7 @@
       <textarea id="textToBeRead" rows="20" cols="100" />
     </div>
     <button @click="analyzeContent">Calculate stuff!</button>
+    <p>{{message}}</p>
   </div>
 </template>
 
@@ -18,6 +19,11 @@ let fileContent = "";
 
 export default {
   name: "Upload",
+  data() {
+    return {
+      message: ""
+    }
+  },
   methods: {
     loadFromFile() {
       let file = document.getElementById("file").files[0];
@@ -46,9 +52,11 @@ export default {
         if (listOfOccuringWords[b] > listOfOccuringWords[a]) {
           return listOfOccuringWords[b] - listOfOccuringWords[a];
         }
+        console.log(`Keys length: ${keys.length}`)
       });
       for (let i = 0; i < keys.length; i++) {
         console.log(`${keys[i]}: ${listOfOccuringWords[keys[i]]}`);
+        this.message = `${keys[i]}: ${listOfOccuringWords[keys[i]]}`
       }
     }
   }
