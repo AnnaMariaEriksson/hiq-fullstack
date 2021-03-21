@@ -2,7 +2,8 @@
   <div class="hello">
     <h1>Hello, please upload a file.</h1>
     <form @submit.prevent="submitFile">
-      <input type="file" @change="loadFromFile" id="file" />
+      <input type="text" v-model="content" placeholder="Type something here." />
+      <input type="file" @change="loadFromFile" id="file" ref="file" />
       <button>Upload</button>
     </form>
 
@@ -10,35 +11,44 @@
       <textarea id="textToBeRead" rows="20" cols="100" />
     </div>
     <button @click="analyzeContent">Calculate stuff!</button>
-    <p>{{message}}</p>
+
   </div>
 </template>
 
 <script>
-let fileContent = "";
-
 export default {
   name: "Upload",
   data() {
     return {
-      message: ""
+      content: ""
     }
+  },
+  computed: {
+    files() {
+      return this.$store.state.files;
+    },
+    file() {
+      return this.$store.state.file
+    }
+  },
+  created() {
+    this.$store.dispatch("getAllFiles");
   },
   methods: {
     loadFromFile() {
       let file = document.getElementById("file").files[0];
       let fileReader = new FileReader();
+      let thisUpload = this;
       fileReader.onload = function(fileLoadEvent) {
-        let textFromLoadedFile = fileLoadEvent.target.result;
-        fileContent = textFromLoadedFile;
-        document.getElementById("textToBeRead").value = textFromLoadedFile;
+        thisUpload.fileContent = fileLoadEvent.target.result;
+        document.getElementById("textToBeRead").value = thisUpload.fileContent;
       };
       fileReader.readAsText(file, "UTF-8");
     },
     analyzeContent() {
       let keys = [];
       let listOfOccuringWords = {};
-      let wordTokens = fileContent.split(/\W+/);
+      let wordTokens = this.fileContent.split(/\W+/); // TODO maybe change this.fileContent to another variable?
       for (let i = 0; i < wordTokens.length; i++) {
         let word = wordTokens[i];
         if (listOfOccuringWords[word] === undefined) {
@@ -49,15 +59,23 @@ export default {
         }
       }
       keys.sort(function(a, b) {
-        if (listOfOccuringWords[b] > listOfOccuringWords[a]) {
-          return listOfOccuringWords[b] - listOfOccuringWords[a];
+        if (listOfOccuringWords[a] > listOfOccuringWords[b]) {
+          return -1
         }
-        console.log(`Keys length: ${keys.length}`)
+        if (listOfOccuringWords[a] < listOfOccuringWords[b]) {
+          return 1
+        }
+        return 0
       });
       for (let i = 0; i < keys.length; i++) {
         console.log(`${keys[i]}: ${listOfOccuringWords[keys[i]]}`);
-        this.message = `${keys[i]}: ${listOfOccuringWords[keys[i]]}`
       }
+    },
+    submitFile() {
+      let fc = {
+        content: this.fileContent
+      };
+      this.$store.dispatch("postContent", fc);
     }
   }
 };
