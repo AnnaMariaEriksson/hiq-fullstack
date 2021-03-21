@@ -67,9 +67,12 @@ export default {
         }
         return 0
       });
-      for (let i = 0; i < keys.length; i++) {
-        console.log(`${keys[i]}: ${listOfOccuringWords[keys[i]]}`);
-      }
+      let mostUsedWord = keys[0];
+        let res = this.fileContent.replaceAll(mostUsedWord, `foo:${mostUsedWord}:bar`)
+        console.log(this.fileContent)
+        console.log(res)
+      console.log(document.getElementById("textToBeRead"))
+        document.getElementById("textToBeRead").value = res
     },
     submitFile() {
       let fc = {
