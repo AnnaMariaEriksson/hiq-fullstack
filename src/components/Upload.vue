@@ -2,14 +2,19 @@
   <div class="hello">
     <h1>Hello, please upload a file.</h1>
     <form @submit.prevent="submitFile">
-      <input type="text" v-model="content" placeholder="Type something here." />
       <input type="file" @change="loadFromFile" id="file" ref="file" />
       <button>Upload</button>
     </form>
 
     <div>
+      <h3>Instructions:</h3>
+      <p>Choose a file, then click upload. <br> After that, press the 'Fetch latest file' button. <br>Finally, press the 'Calculate stuff' button.</p>
+    </div>
+
+    <div>
       <textarea id="textToBeRead" rows="20" cols="100" />
     </div>
+    <button @click="fetchLatestFile">Fetch latest file</button>
     <button @click="analyzeContent">Calculate stuff!</button>
 
   </div>
@@ -24,15 +29,25 @@ export default {
     }
   },
   computed: {
-    files() {
-      return this.$store.state.files;
+    files: {
+      get() {
+        return this.$store.state.files;
+      },
+      set(value) {
+        this.$store.commit("setFiles", value)
+      }
     },
-    file() {
-      return this.$store.state.file
+    file: {
+      get() {
+        return this.$store.state.file;
+      },
+      set(value) {
+        this.$store.commit("setFileContent", value)
+      }
     }
   },
   created() {
-    this.$store.dispatch("getAllFiles");
+    this.$store.dispatch("getLastFile");
   },
   methods: {
     loadFromFile() {
@@ -41,14 +56,18 @@ export default {
       let thisUpload = this;
       fileReader.onload = function(fileLoadEvent) {
         thisUpload.fileContent = fileLoadEvent.target.result;
-        document.getElementById("textToBeRead").value = thisUpload.fileContent;
+        //document.getElementById("textToBeRead").value = thisUpload.fileContent;
       };
       fileReader.readAsText(file, "UTF-8");
+    },
+    fetchLatestFile() {
+        document.getElementById("textToBeRead").value = this.files[this.files.length - 1].content;
     },
     analyzeContent() {
       let keys = [];
       let listOfOccuringWords = {};
-      let wordTokens = this.fileContent.split(/\W+/); // TODO maybe change this.fileContent to another variable?
+      console.log(this)
+      let wordTokens = this.files[0].content.split(/\W+/);
       for (let i = 0; i < wordTokens.length; i++) {
         let word = wordTokens[i];
         if (listOfOccuringWords[word] === undefined) {
@@ -68,7 +87,7 @@ export default {
         return 0
       });
       let mostUsedWord = keys[0];
-        let res = this.fileContent.replaceAll(mostUsedWord, `foo:${mostUsedWord}:bar`)
+        let res = this.files[0].content.replaceAll(mostUsedWord, `foo:${mostUsedWord}:bar`)
         console.log(this.fileContent)
         console.log(res)
       console.log(document.getElementById("textToBeRead"))

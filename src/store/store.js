@@ -57,7 +57,7 @@ export default new Vuex.Store({
         e.message;
       }
     },
-    async getAllFiles({ commit }) {
+    async getLastFile({ commit }) {
       try {
         let response = await fetch("/files");
         let data = await response.json();
@@ -66,6 +66,7 @@ export default new Vuex.Store({
         e.message;
       }
     }
+
   },
   modules: {}
 });

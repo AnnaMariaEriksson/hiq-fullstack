@@ -29,8 +29,7 @@ app.post("/files", async (request, response) => {
 //Get all the content
 app.get("/files", async (request, response) => {
 
-
-  let data = await db.query("SELECT * FROM hiq.files");
+  let data = await db.query("SELECT * FROM hiq.files ORDER BY id DESC LIMIT 1;");
     response.json(data)
 });
 
