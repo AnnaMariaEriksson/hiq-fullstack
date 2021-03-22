@@ -6,6 +6,7 @@ const port = 3000;
 
 app.use(bodyparser.json());
 const mysql = require("mysql");
+// not the safest way to store credentials, so sorry. Would've used env file for this if I could.
 const db = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -28,7 +29,7 @@ app.post("/files", async (request, response) => {
 
 //Get all the content
 app.get("/files", async (request, response) => {
-
+// return the latest row in the DB.
   let data = await db.query("SELECT * FROM hiq.files ORDER BY id DESC LIMIT 1;");
     response.json(data)
 });

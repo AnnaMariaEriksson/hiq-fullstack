@@ -20,22 +20,6 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async uploadFile({ commit }, fc) {
-      console.log(fc);
-      try {
-        let response = await fetch("/files", {
-          method: "post",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(fc)
-        });
-        console.log(response);
-        let newFile = await response.json();
-        console.log(newFile);
-        commit("setFiles", newFile);
-      } catch (e) {
-        e.message;
-      }
-    },
     async postContent({ commit }, fc) {
       console.log(fc);
       let response = await fetch("/files", {
@@ -46,16 +30,6 @@ export default new Vuex.Store({
       let newFileContent = await response.json();
       console.log(newFileContent);
       commit("setFiles", newFileContent);
-    },
-    async getTextFromFile({ commit }, id) {
-      try {
-        let response = await fetch("/files/" + id);
-        let data = await response.json();
-        console.log(data);
-        commit("setFileContent", data);
-      } catch (e) {
-        e.message;
-      }
     },
     async getLastFile({ commit }) {
       try {
